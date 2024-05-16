@@ -11,7 +11,7 @@ export const databaseProviders = [
         port: 5432,
         username: 'postgres',
         password: '12345',
-        database: 'climax',
+        database: 'tant',
         define:{
           timestamps:true,
         },
