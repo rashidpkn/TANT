@@ -1,7 +1,13 @@
 import React from 'react'
+import { Outlet, Route, Routes } from 'react-router-dom'
+import HomePage from './pages/home'
 
-export default function App() {
+export default function App():React.ReactElement {
   return (
-    <div>App</div>
+    <Routes>
+      <Route path='/' element={<Outlet/>}>
+        <Route index element={<HomePage/>} />
+      </Route>
+    </Routes>
   )
 }
