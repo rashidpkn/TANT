@@ -24,6 +24,7 @@ export default function HomePage():React.ReactElement {
     const [web3, setWeb3] = useState<any>();
     
     const [address, setAddress] = useState('');
+    
     useEffect(() => {
       const { ethereum }:any = window;
       if (ethereum) {
@@ -59,11 +60,15 @@ export default function HomePage():React.ReactElement {
             });
         } catch (error) {
           console.error('Transaction failed:', error);
+          alert(error)
         }
       } else {
         console.log('Web3 or address is not defined');
       }
     };
+
+
+    
   
 
   return (
