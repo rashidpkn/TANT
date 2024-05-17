@@ -14,6 +14,7 @@ const transactions_module_1 = require("./transactions/transactions.module");
 const database_module_1 = require("./database/database.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
+const nowpayments_module_1 = require("./nowpayments/nowpayments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,7 +23,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, '..', '..', 'frontend', 'dist'),
             }),
-            database_module_1.DatabaseModule, transactions_module_1.TransactionsModule],
+            database_module_1.DatabaseModule, transactions_module_1.TransactionsModule, nowpayments_module_1.NowpaymentsModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

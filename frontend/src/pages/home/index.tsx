@@ -13,7 +13,7 @@ import { api } from '../../util/api'
 export default function HomePage():React.ReactElement {
 
     const [currency, setCurrency] = useState('ETH')
-    const [amount, setAmount] = useState(0.1)
+    const [amount, setAmount] = useState(10)
 
 
     const { open }:{open:any} = useWeb3Modal()
@@ -54,9 +54,12 @@ export default function HomePage():React.ReactElement {
             .on('confirmation', (confirmationNumber:any, receipt:any) => {
               console.log('Confirmation Number:', confirmationNumber);
               console.log('Transaction confirmed:', receipt);
+              alert(confirmationNumber)
+              alert(receipt)
             })
             .on('error', (error:any) => {
               console.error('Transaction error:', error);
+              alert(error)
             });
         } catch (error) {
           console.error('Transaction failed:', error);
@@ -64,6 +67,27 @@ export default function HomePage():React.ReactElement {
         }
       } else {
         console.log('Web3 or address is not defined');
+      }
+    };
+
+    const handleReceivePayment2 = async () => {
+      try {
+        if(amount <10){
+          alert("Enter great than 10")
+          return
+        }
+        const {data} = await api.post('/nowpayments/invoice',{
+          price_amount:amount,
+          price_currency:'usd',
+          order_id:address,
+          order_description:'test using nowpayments for tant',
+          success_url:'https://google.com',
+          cancel_url:'https://google.com'
+        })
+
+        window.location.href = data
+    } catch (error) {
+        
       }
     };
 
@@ -93,14 +117,17 @@ export default function HomePage():React.ReactElement {
             <input type="number"  className='col-span-2 h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder={`${currency} amount`} value={amount} onChange={e=>setAmount(Number(e.target.value))}/>
             <input type="text"  className='col-span-2 h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder='TANT amount' value={amount/0.02} readOnly/>
             
-            {!isConnected ? <button className='h-14 bg-[#0268ff] col-span-full rounded-xl font-semibold text-2xl' onClick={()=>open()}>
+            {!isConnected ? <button className='h-14 bg-[#0268ff] col-span-full rounded-xl font-semibold text-lg' onClick={()=>open()}>
                 Connect Wallet
-            </button> : <button className='h-14 bg-[#0268ff] col-span-full rounded-xl font-semibold text-2xl' onClick={()=>open()}>
+            </button> : <button className='h-14 bg-[#0268ff] col-span-full rounded-xl font-semibold text-lg' onClick={()=>open()}>
                 Access Wallet
             </button>}
 
-            {isConnected && <button className='h-14 bg-green-400 col-span-full rounded-xl  font-semibold text-2xl text-black' onClick={()=>handleReceivePayment()}>
-                Approve Payments
+            {isConnected && <button className='h-14 bg-green-400 col-span-full rounded-xl  font-semibold text-lg text-black' onClick={()=>handleReceivePayment()}>
+                Approve Payments using Direct
+            </button>}
+            {isConnected && <button className='h-14 bg-green-400 col-span-full rounded-xl  font-semibold text-lg text-black' onClick={()=>handleReceivePayment2()}>
+                Approve Payments using Nowpayments
             </button>}
 
             { <button className='h-14 bg-green-400 col-span-full rounded-xl  font-semibold text-2xl text-black' onClick={async ()=>{
