@@ -17,43 +17,54 @@ export default function HomePage():React.ReactElement {
 
 
     const { open }:{open:any} = useWeb3Modal()
-    const { address,isConnected } = useAccount()
-    const [web3, setWeb3]:any = useState(null);
+    const { isConnected } = useAccount()
     
     
-
+    
+    const [web3, setWeb3] = useState<any>();
+    
+    const [address, setAddress] = useState('');
     useEffect(() => {
-        const {ethereum}:any = window
-        if (ethereum) {
-          const provider:any = new Web3(ethereum);
-          setWeb3(provider);
-        }
-          
-      }, []);
-
-
+      const { ethereum }:any = window;
+      if (ethereum) {
+        const provider:any = new Web3(ethereum);
+        setWeb3(provider);
+        ethereum.request({ method: 'eth_requestAccounts' })
+          .then((accounts:any)  => {
+            setAddress(accounts[0]);
+          })
+          .catch((err :any) => console.error('Failed to get accounts:', err));
+      } else {
+        console.log('Please install MetaMask!');
+      }
+    }, []);
+  
     const handleReceivePayment = async () => {
-        if (web3) {
-console.log(web3.utils.toWei(0.1, 'ether'));
-            try {
-                
-                await web3.eth.sendTransaction({
-                  from:address,
-                  to:'0xa4E2CcBB58894C5e1511cf483b62d9Cee532d54C',
-                  value: web3.utils.toWei(0.000332, 'ether')
-                }).on('confirmation' , (confirmationNumber:any, receipt:any)=>{
-                  console.log(confirmationNumber);
-                  console.log('Transaction confirmed:', receipt);
-                }).on('error',(error:any)=>{
-                  console.error('Transaction error:', error);
-                })
-            } catch (error) {
-                console.log('Hello');
-                // console.log(error);
-            }
-           
+      if (web3 && address) {
+        try {
+          const transactionParameters = {
+            from: address,
+            to: '0xa4E2CcBB58894C5e1511cf483b62d9Cee532d54C',
+            value: web3.utils.toWei('0.000332', 'ether'),
+            gas: 1, 
+          };
+  
+          await web3.eth.sendTransaction(transactionParameters)
+            .on('confirmation', (confirmationNumber:any, receipt:any) => {
+              console.log('Confirmation Number:', confirmationNumber);
+              console.log('Transaction confirmed:', receipt);
+            })
+            .on('error', (error:any) => {
+              console.error('Transaction error:', error);
+            });
+        } catch (error) {
+          console.error('Transaction failed:', error);
         }
-      };
+      } else {
+        console.log('Web3 or address is not defined');
+      }
+    };
+  
 
   return (
 
