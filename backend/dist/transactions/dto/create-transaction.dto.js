@@ -24,4 +24,12 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateTransactionDto.prototype, "totalToken", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateTransactionDto.prototype, "amount", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateTransactionDto.prototype, "currency", void 0);
 //# sourceMappingURL=create-transaction.dto.js.map

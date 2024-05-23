@@ -22,6 +22,14 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ allowNull: false, type: sequelize_typescript_1.DataType.FLOAT }),
     __metadata("design:type", Number)
 ], Transactions.prototype, "totalToken", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ allowNull: false, type: sequelize_typescript_1.DataType.FLOAT, defaultValue: 0 }),
+    __metadata("design:type", Number)
+], Transactions.prototype, "amount", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ allowNull: false, defaultValue: 'usd' }),
+    __metadata("design:type", String)
+], Transactions.prototype, "currency", void 0);
 exports.Transactions = Transactions = __decorate([
     sequelize_typescript_1.Table
 ], Transactions);

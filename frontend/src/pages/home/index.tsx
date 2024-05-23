@@ -8,12 +8,14 @@ import { useAccount } from 'wagmi'
 
 import Web3 from 'web3';
 import { api } from '../../util/api'
+import { getCryptoPrice } from '../../util/getCryptoPrice'
 
 
 export default function HomePage():React.ReactElement {
 
-    const [currency, setCurrency] = useState('ETH')
+    const [currency, setCurrency] = useState('USDT')
     const [amount, setAmount] = useState(10)
+    const [usd, setUsd] = useState(10)
 
 
     const { open }:{open:any} = useWeb3Modal()
@@ -92,13 +94,21 @@ export default function HomePage():React.ReactElement {
     };
 
 
+    useEffect(() => {
+      getCryptoPrice(currency).then(res=>{
+        setUsd(res * amount)
+      })
+
+      
+    }, [currency])
+    
     
   
 
   return (
 
-    <main className='h-screen w-full bg-black/90 flex justify-center items-center  text-white'>
-        <div className="max-w-lg w-full  mx-5 m-auto p-5 rounded-2xl bg-[#101012] grid grid-cols-4 gap-5">
+    <main className='min-h-screen w-full bg-black/90 flex justify-center items-center  text-white p-5'>
+        <div className="max-w-lg w-full   m-auto p-5 rounded-2xl bg-[#101012] grid grid-cols-4 gap-5">
             <h1 className='col-span-full text-2xl' >Buy TANT Token Now</h1>
             <CurrentStage/>
             <NextStage />
@@ -111,11 +121,26 @@ export default function HomePage():React.ReactElement {
             <p className='col-span-full text-[#848385] text-center text-lg'>Connect Wallet</p>
             
             <select className='h-12 col-span-full rounded-xl bg-[#171719] px-5 outline-none' onChange={e=>setCurrency(e.target.value)}>
+                <option value="USDT">USDT</option>
                 <option value="ETH">ETH</option>
+                <option value="BTC">BTC</option>
             </select>
 
-            <input type="number"  className='col-span-2 h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder={`${currency} amount`} value={amount} onChange={e=>setAmount(Number(e.target.value))}/>
-            <input type="text"  className='col-span-2 h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder='TANT amount' value={amount/0.02} readOnly/>
+        <div className="col-span-full lg:col-span-2 space-y-2">
+              <p>{`${currency} amount`}</p>
+            <input type="number"  className='w-full h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder={`${currency} amount`}  value={amount} onChange={ async(e)=>{
+              setAmount((Number(e.target.value)))
+              let currentAmount = await getCryptoPrice(currency) * Number(e.target.value)
+              setUsd(currentAmount)
+            }}/>
+            <p className='text-sm text-white/30'>USD {usd.toFixed(2)}</p>
+            </div>
+
+              <div className="col-span-full lg:col-span-2 space-y-2">
+              <p>TANT Token</p>
+                <input type="text"  className=' w-full h-14 px-2 bg-transparent border-[#171719] border-2 rounded-xl' placeholder='TANT amount' value={(usd/0.02).toFixed(2)} readOnly/>
+                <p className='text-sm text-white/30'>$ 1 =  50 TANT</p>
+              </div>
             
             {!isConnected ? <button className='h-14 bg-[#0268ff] col-span-full rounded-xl font-semibold text-lg' onClick={()=>open()}>
                 Connect Wallet
@@ -132,7 +157,7 @@ export default function HomePage():React.ReactElement {
 
             { <button className='h-14 bg-green-400 col-span-full rounded-xl  font-semibold text-2xl text-black' onClick={async ()=>{
                 try {
-                    await api.post('/transactions',{walletAddress:address,totalToken:amount/0.02})
+                    await api.post('/transactions',{walletAddress:address,totalToken:usd/0.02,amount:usd,currency})
                     alert("Thank you for purchasing tokens")
                 } catch (error) {
                     alert("somthing is error")

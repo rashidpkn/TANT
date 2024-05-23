@@ -10,4 +10,11 @@ export class CreateTransactionDto {
     @IsNumber()
     totalToken:number
 
+    @IsNumber()
+    amount:number
+
+    
+@IsString()
+    currency:string
+
 }

@@ -10,4 +10,10 @@ export class Transactions extends Model {
     @Column({allowNull:false,type:DataType.FLOAT})
     totalToken:number
 
+    @Column({allowNull:false,type:DataType.FLOAT,defaultValue:0})
+    amount:number
+
+    @Column({allowNull:false,defaultValue:'usd'})
+    currency: string
+    
 }
